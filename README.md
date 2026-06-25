@@ -2,15 +2,11 @@
 
 Python SDK for reading battery box status over RS485.
 
-## Requirements
-
-- Python 3.10+
-- Linux
-- RS485 serial interface
+**Requirements:** Python 3.10+, Linux, RS485 serial interface.
 
 ## Installation
 
-Download the wheel from [GitHub Releases](https://github.com/Green-Ideas-Technology/battery-box-sdk/releases) and install:
+Download the wheel from [GitHub Releases](https://github.com/Green-Ideas-Technology/battery-box-sdk/releases):
 
 ```bash
 pip install battery_box_sdk-0.1.0-py3-none-any.whl
@@ -27,27 +23,20 @@ pip install git+https://github.com/Green-Ideas-Technology/battery-box-sdk.git@v0
 ```python
 from battery_box_sdk import BatteryBoxClient
 
-client = BatteryBoxClient(port="/dev/ttyLP0", baudrate=115200)
-status = client.read_status()
+with BatteryBoxClient(port="/dev/ttyLP0") as client:
+    status = client.read_status()
 
-print(status.charger.ic_temperature_c)
-print(status.battery_a.soc_percent)
-print(status.battery_a.soh.estimated_percent)
-print(status.alarms.ic4015.error)
+print(f"Battery A SOC: {status.battery_a.soc_percent:.1f} %")
+print(f"Battery A SOH: {status.battery_a.soh.estimated_percent:.1f} %")
+print(f"Charger temp:  {status.charger.ic_temperature_c:.1f} °C")
 ```
-
-## API Reference
-
-See [API reference](docs/api.md) for full documentation.
 
 ## Error Handling
 
-`read_status()` raises an exception if any required command fails. All exceptions
-are subclasses of `BatteryBoxError`.
+`read_status()` raises an exception on any failure — no partial results are returned.
 
 ```python
-from battery_box_sdk import BatteryBoxClient
-from battery_box_sdk.errors import BatteryBoxError, TransportError, TimeoutError
+from battery_box_sdk.errors import BatteryBoxError, TimeoutError, TransportError
 
 try:
     status = client.read_status()
@@ -59,15 +48,16 @@ except BatteryBoxError as e:
     print(f"SDK error: {e}")
 ```
 
-## Development
+## API Reference
 
-This project uses [uv](https://docs.astral.sh/uv/) for dependency management.
+See **[docs/api.md](docs/api.md)** for the complete API reference including all fields, units, and examples.
+
+## Development
 
 ```bash
 uv sync
 uv run pytest
-uv run ruff check
-uv run ruff format --check
+uv run ruff check src tests
 uv run mypy --strict src
 ```
 
