@@ -20,9 +20,9 @@ _RTC = bytes(8)  # 8 zero bytes standing in for the RTC prefix
 
 def _make_charger_payload(
     bat_a_mv: int = 25_000,
-    bat_a_ma: int = 1_500,
+    bat_a_ua: int = 1_500,
     bat_b_mv: int = 24_000,
-    bat_b_ma: int = 0,
+    bat_b_ua: int = 0,
     chg_mv: int = 29_400,
     chg_ma: int = 2_000,
     die_0_1c: int = 320,  # 32.0°C
@@ -35,9 +35,9 @@ def _make_charger_payload(
     status = struct.pack(
         "<iiiiiiIHBBB",
         bat_a_mv,
-        bat_a_ma,
+        bat_a_ua,
         bat_b_mv,
-        bat_b_ma,
+        bat_b_ua,
         chg_mv,
         chg_ma,
         die_0_1c,
@@ -110,11 +110,11 @@ def _make_alarm_payload(
 class TestChargerParser:
     def test_basic_fields(self) -> None:
         payload = _make_charger_payload(
-            bat_a_mv=25_000, bat_a_ma=1_500, die_0_1c=320, act=0, slot_status=0x03
+            bat_a_mv=25_000, bat_a_ua=1_500, die_0_1c=320, act=0, slot_status=0x03
         )
         frame = parse_charger_frame(payload)
         assert frame.battery_a_voltage_mv == 25_000
-        assert frame.battery_a_current_ma == 1_500
+        assert frame.battery_a_current_ua == 1_500
         assert frame.die_temperature_0_1c == 320
         assert frame.act == 0
         assert frame.battery_slot_status == 0x03
@@ -125,10 +125,10 @@ class TestChargerParser:
             parse_charger_frame(b"\x00" * 10)
 
     def test_battery_b_values(self) -> None:
-        payload = _make_charger_payload(bat_b_mv=24_500, bat_b_ma=-500)
+        payload = _make_charger_payload(bat_b_mv=24_500, bat_b_ua=-500)
         frame = parse_charger_frame(payload)
         assert frame.battery_b_voltage_mv == 24_500
-        assert frame.battery_b_current_ma == -500
+        assert frame.battery_b_current_ua == -500
 
 
 # ---------------------------------------------------------------------------

@@ -42,6 +42,14 @@ class ChargerStatus:
     battery_slot_status: int
     output_enable: bool
 
+    @property
+    def battery_a_present(self) -> bool:
+        return bool(self.battery_slot_status & 0x01)
+
+    @property
+    def battery_b_present(self) -> bool:
+        return bool(self.battery_slot_status & 0x02)
+
 
 @dataclass(frozen=True)
 class Ic4015AlarmStatus:

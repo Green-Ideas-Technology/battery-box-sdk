@@ -8,11 +8,11 @@ from dataclasses import dataclass
 @dataclass
 class _ChargerRawFrame:
     battery_a_voltage_mv: int = 0
-    battery_a_current_ma: int = 0
+    battery_a_current_ua: int = 0
     battery_b_voltage_mv: int = 0
-    battery_b_current_ma: int = 0
+    battery_b_current_ua: int = 0
     charging_voltage_mv: int = 0
-    charging_current_ma: int = 0
+    charging_current_ua: int = 0
     die_temperature_0_1c: int = 0
     act: int = 0
     battery_slot_status: int = 0

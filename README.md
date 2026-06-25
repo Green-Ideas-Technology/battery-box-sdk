@@ -157,7 +157,8 @@ BMS data for one battery pack.
 | `charging_current_a` | `float` | A | Charger output current |
 | `ic_temperature_c` | `float` | °C | Charger IC die temperature |
 | `active_battery_slot` | `BatterySlot \| None` | — | Slot currently being charged, or `None` |
-| `battery_slot_status` | `int` | — | Raw slot presence bitmask (bit 0 = A present, bit 1 = B present) |
+| `battery_a_present` | `bool` | — | Battery A is physically installed |
+| `battery_b_present` | `bool` | — | Battery B is physically installed |
 | `output_enable` | `bool` | — | Whether the 12 V output is enabled |
 
 ### AlarmStatus

@@ -48,11 +48,11 @@ def parse_charger_frame(payload: bytes) -> _ChargerRawFrame:
         return v
 
     battery_a_voltage_mv = _i32()
-    battery_a_current_ma = _i32()
+    battery_a_current_ua = _i32()
     battery_b_voltage_mv = _i32()
-    battery_b_current_ma = _i32()
+    battery_b_current_ua = _i32()
     charging_voltage_mv = _i32()
-    charging_current_ma = _i32()
+    charging_current_ua = _i32()
     die_temperature_0_1c = _u32()
     _u16()  # aps_status — internal, not exposed in public API
     act = _u8()
@@ -61,11 +61,11 @@ def parse_charger_frame(payload: bytes) -> _ChargerRawFrame:
 
     return _ChargerRawFrame(
         battery_a_voltage_mv=battery_a_voltage_mv,
-        battery_a_current_ma=battery_a_current_ma,
+        battery_a_current_ua=battery_a_current_ua,
         battery_b_voltage_mv=battery_b_voltage_mv,
-        battery_b_current_ma=battery_b_current_ma,
+        battery_b_current_ua=battery_b_current_ua,
         charging_voltage_mv=charging_voltage_mv,
-        charging_current_ma=charging_current_ma,
+        charging_current_ua=charging_current_ua,
         die_temperature_0_1c=die_temperature_0_1c,
         act=act,
         battery_slot_status=battery_slot_status,

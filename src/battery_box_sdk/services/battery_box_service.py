@@ -35,11 +35,11 @@ def _map_charger(raw: _ChargerRawFrame) -> ChargerStatus:
 
     return ChargerStatus(
         battery_a_voltage_v=raw.battery_a_voltage_mv / 1000.0,
-        battery_a_current_a=raw.battery_a_current_ma / 1000.0,
+        battery_a_current_a=raw.battery_a_current_ua / 1_000_000.0,
         battery_b_voltage_v=raw.battery_b_voltage_mv / 1000.0,
-        battery_b_current_a=raw.battery_b_current_ma / 1000.0,
+        battery_b_current_a=raw.battery_b_current_ua / 1_000_000.0,
         charging_voltage_v=raw.charging_voltage_mv / 1000.0,
-        charging_current_a=raw.charging_current_ma / 1000.0,
+        charging_current_a=raw.charging_current_ua / 1_000_000.0,
         ic_temperature_c=raw.die_temperature_0_1c / 10.0,
         active_battery_slot=active,
         battery_slot_status=raw.battery_slot_status,
