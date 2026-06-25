@@ -1,12 +1,11 @@
 """Tests for CRC-16 Modbus."""
 
-import pytest
-
 from battery_box_sdk.transport.crc import append_crc, crc16_modbus, verify_crc
 
 
 def test_crc16_known_value() -> None:
-    assert crc16_modbus(b"\x01\x03\x00\x00\x00\x02") == 0xC40B
+    # Algorithm matches rs485_manager.py reference; result bytes [C4, 0B] LE → 0x0BC4
+    assert crc16_modbus(b"\x01\x03\x00\x00\x00\x02") == 0x0BC4
 
 
 def test_append_crc_roundtrip() -> None:

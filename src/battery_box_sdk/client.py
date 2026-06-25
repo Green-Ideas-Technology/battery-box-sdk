@@ -4,14 +4,16 @@ from __future__ import annotations
 
 from battery_box_sdk.config import BatteryBoxConfig
 from battery_box_sdk.domain.models import (
+    AlarmStatus,
     BatteryBoxStatus,
     BatteryPackStatus,
     BatterySlot,
     ChargerStatus,
-    AlarmStatus,
+    ProtectionStatus,
     SohEstimate,
 )
 from battery_box_sdk.domain.soh import estimate_soh
+from battery_box_sdk.services.battery_box_service import BatteryBoxService
 from battery_box_sdk.transport.abc import Transport
 from battery_box_sdk.transport.rs485 import Rs485Transport
 
@@ -36,30 +38,29 @@ class BatteryBoxClient:
     ) -> None:
         config = BatteryBoxConfig(port=port, baudrate=baudrate, timeout_s=timeout_s)
         self._transport: Transport = transport or Rs485Transport(config)
+        self._service = BatteryBoxService(self._transport)
 
     def read_status(self) -> BatteryBoxStatus:
         """Read full battery box status.
 
-        Sends charger, battery, and alarm commands.
+        Sends charger, battery A, battery B, and alarm commands in sequence.
         Raises BatteryBoxError (or a subclass) if any command fails.
         """
-        raise NotImplementedError("read_status() is not yet implemented")
+        return self._service.read_status()
 
     def read_charger_status(self) -> ChargerStatus:
-        """Read charger and battery box status only."""
-        raise NotImplementedError("read_charger_status() is not yet implemented")
+        """Read charger and battery box status only (0x40 command)."""
+        return self._service.read_charger_status()
 
     def read_battery_status(self, slot: BatterySlot) -> BatteryPackStatus:
-        """Read status for a single battery slot."""
-        raise NotImplementedError("read_battery_status() is not yet implemented")
+        """Read BMS status for a single battery slot (0x44 command)."""
+        return self._service.read_battery_status(slot)
 
-    def read_alarm_status(self) -> AlarmStatus:
-        """Read alarm and protection status."""
-        raise NotImplementedError("read_alarm_status() is not yet implemented")
+    def read_alarm_status(self) -> tuple[AlarmStatus, ProtectionStatus]:
+        """Read alarm and protection status (0x46 command)."""
+        return self._service.read_alarm_status()
 
-    def calculate_soh(
-        self, full_charge_capacity_mah: int, cycle_count: int
-    ) -> SohEstimate:
+    def calculate_soh(self, full_charge_capacity_mah: int, cycle_count: int) -> SohEstimate:
         """Estimate battery SOH from full charge capacity and cycle count.
 
         Does not communicate with the device; computation is local.
@@ -69,7 +70,7 @@ class BatteryBoxClient:
     def close(self) -> None:
         self._transport.close()
 
-    def __enter__(self) -> "BatteryBoxClient":
+    def __enter__(self) -> BatteryBoxClient:
         return self
 
     def __exit__(self, *args: object) -> None:

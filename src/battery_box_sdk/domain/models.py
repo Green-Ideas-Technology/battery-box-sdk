@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass
 from enum import Enum
-from typing import Mapping
 
 
 class BatterySlot(Enum):
@@ -85,18 +85,14 @@ class ProtectionStatus:
 @dataclass(frozen=True)
 class BatteryBoxStatus:
     charger: ChargerStatus
-    _batteries: Mapping[BatterySlot, BatteryPackStatus]
+    batteries: Mapping[BatterySlot, BatteryPackStatus]
     alarms: AlarmStatus
     protections: ProtectionStatus
 
     @property
     def battery_a(self) -> BatteryPackStatus:
-        return self._batteries[BatterySlot.A]
+        return self.batteries[BatterySlot.A]
 
     @property
     def battery_b(self) -> BatteryPackStatus:
-        return self._batteries[BatterySlot.B]
-
-    @property
-    def batteries(self) -> Mapping[BatterySlot, BatteryPackStatus]:
-        return self._batteries
+        return self.batteries[BatterySlot.B]

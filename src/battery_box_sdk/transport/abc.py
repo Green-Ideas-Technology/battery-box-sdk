@@ -5,13 +5,15 @@ from abc import ABC, abstractmethod
 
 class Transport(ABC):
     @abstractmethod
-    def send_command(self, command: bytes) -> bytes:
-        """Send a command packet and return the response payload bytes."""
+    def exchange(self, command: int, data: bytes, expected_response: int) -> bytes:
+        """Send a command packet, await the response, and return the response payload.
+
+        Raises BatteryBoxError (or a subclass) on any communication failure.
+        """
         ...
 
     @abstractmethod
-    def close(self) -> None:
-        ...
+    def close(self) -> None: ...
 
     def __enter__(self) -> "Transport":
         return self
