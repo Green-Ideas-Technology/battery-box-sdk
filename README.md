@@ -120,9 +120,9 @@ Returned by `read_status()`.
 | `batteries` | `Mapping[BatterySlot, BatteryPackStatus]` | BMS status keyed by slot |
 | `alarms` | `AlarmStatus` | Alarm flags |
 | `protections` | `ProtectionStatus` | Hardware protection flags |
-| `battery_a` | `BatteryPackStatus` *(property)* | Shortcut for `batteries[BatterySlot.A]` |
-| `battery_b` | `BatteryPackStatus` *(property)* | Shortcut for `batteries[BatterySlot.B]` |
-| `has_alert` | `bool` *(property)* | `True` if any alarm or protection flag is active |
+| `battery_a` | `BatteryPackStatus` | Shortcut for `batteries[BatterySlot.A]` |
+| `battery_b` | `BatteryPackStatus` | Shortcut for `batteries[BatterySlot.B]` |
+| `has_alert` | `bool` | `True` if any alarm or protection flag is active |
 
 ### BatteryPackStatus
 
