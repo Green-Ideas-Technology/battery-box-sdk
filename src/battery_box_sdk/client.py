@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from battery_box_sdk._logging import _setup_file_logging
 from battery_box_sdk.config import BatteryBoxConfig
 from battery_box_sdk.domain.models import (
     AlarmStatus,
@@ -34,9 +35,13 @@ class BatteryBoxClient:
         baudrate: int = 115200,
         timeout_s: float = 2.0,
         *,
+        log_dir: str = "/battery_box_sdk/",
         transport: Transport | None = None,
     ) -> None:
-        config = BatteryBoxConfig(port=port, baudrate=baudrate, timeout_s=timeout_s)
+        config = BatteryBoxConfig(
+            port=port, baudrate=baudrate, timeout_s=timeout_s, log_dir=log_dir
+        )
+        _setup_file_logging(config.log_dir)
         self._transport: Transport = transport or Rs485Transport(config)
         self._service = BatteryBoxService(self._transport)
 

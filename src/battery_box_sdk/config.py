@@ -10,3 +10,4 @@ class BatteryBoxConfig:
     timeout_s: float = 2.0
     retries: int = 3
     device_address: int = field(default=0x01)
+    log_dir: str = "/battery_box_sdk/"

@@ -54,6 +54,8 @@ BatteryBoxClient(
     port: str,
     baudrate: int = 115200,
     timeout_s: float = 2.0,
+    *,
+    log_dir: str = "/battery_box_sdk/",
 )
 ```
 
@@ -62,6 +64,9 @@ BatteryBoxClient(
 | `port` | Serial device path, e.g. `"/dev/ttyLP0"` |
 | `baudrate` | Baud rate (default `115200`) |
 | `timeout_s` | Per-command response timeout in seconds (default `2.0`) |
+| `log_dir` | Directory for diagnostic log files (default `"/battery_box_sdk/"`) |
+
+Diagnostic logs are written automatically to `/battery_box_sdk/battery_box_sdk.log` from the moment a client is created. See [Logs](#logs) for details.
 
 Supports use as a context manager (`with` statement) — `close()` is called automatically on exit.
 
@@ -324,6 +329,28 @@ else:
     print(f"  Charging voltage: {status.charger.charging_voltage_v:.2f} V")
     print(f"  Charging current: {status.charger.charging_current_a:.2f} A")
 ```
+
+---
+
+## Logs
+
+Diagnostic logs are written automatically to `/battery_box_sdk/battery_box_sdk.log` whenever a `BatteryBoxClient` is created. No configuration is required.
+
+Log files rotate automatically: each file is capped at 1 MB and up to 5 files are kept (5 MB total). Older entries are deleted as new ones are written.
+
+To collect logs for support, send all files matching `/battery_box_sdk/battery_box_sdk.log*` to the engineering team.
+
+### Change the log directory
+
+Pass `log_dir` when creating the client:
+
+```python
+from battery_box_sdk import BatteryBoxClient
+
+client = BatteryBoxClient(port="/dev/ttyLP0", log_dir="/var/log/my_app/")
+```
+
+> **Note:** The directory is created automatically if it does not exist.
 
 ---
 

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import logging
+
 from battery_box_sdk.domain.models import (
     AlarmStatus,
     BatteryAlarmStatus,
@@ -22,6 +24,8 @@ from battery_box_sdk.protocol.parsers import (
     parse_charger_frame,
 )
 from battery_box_sdk.transport.abc import Transport
+
+logger = logging.getLogger(__name__)
 
 
 def _map_charger(raw: _ChargerRawFrame) -> ChargerStatus:
@@ -98,6 +102,7 @@ class BatteryBoxService:
         self._t = transport
 
     def read_status(self) -> BatteryBoxStatus:
+        logger.debug("read_status: sending 4 commands (charger, battery_a, battery_b, alarm)")
         charger_payload = self._t.exchange(cmd.CMD_CHARGER_STATUS, b"\x00", cmd.RESP_CHARGER_STATUS)
         charger_raw = parse_charger_frame(charger_payload)
 
@@ -131,18 +136,22 @@ class BatteryBoxService:
             pack_under_voltage=bool(bat_a_raw.uv_alert_low & 0x08),
         )
 
-        return BatteryBoxStatus(
+        result = BatteryBoxStatus(
             charger=charger,
             batteries={BatterySlot.A: bat_a, BatterySlot.B: bat_b},
             alarms=alarms,
             protections=protections,
         )
+        logger.debug("read_status: done  has_alert=%s", result.has_alert)
+        return result
 
     def read_charger_status(self) -> ChargerStatus:
+        logger.debug("read_charger_status: cmd=0x%02X", cmd.CMD_CHARGER_STATUS)
         payload = self._t.exchange(cmd.CMD_CHARGER_STATUS, b"\x00", cmd.RESP_CHARGER_STATUS)
         return _map_charger(parse_charger_frame(payload))
 
     def read_battery_status(self, slot: BatterySlot) -> BatteryPackStatus:
+        logger.debug("read_battery_status: slot=%s", slot.value)
         slot_byte = cmd.BATTERY_SLOT_A if slot == BatterySlot.A else cmd.BATTERY_SLOT_B
         payload = self._t.exchange(
             cmd.CMD_BATTERY_STATUS, bytes([slot_byte]), cmd.RESP_BATTERY_STATUS
@@ -150,5 +159,6 @@ class BatteryBoxService:
         return _map_battery(parse_battery_frame(payload))
 
     def read_alarm_status(self) -> tuple[AlarmStatus, ProtectionStatus]:
+        logger.debug("read_alarm_status: cmd=0x%02X", cmd.CMD_ALARM_STATUS)
         payload = self._t.exchange(cmd.CMD_ALARM_STATUS, b"\x00", cmd.RESP_ALARM_STATUS)
         return _map_alarm(parse_alarm_frame(payload))
