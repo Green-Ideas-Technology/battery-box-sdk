@@ -122,6 +122,7 @@ Returned by `read_status()`.
 | `protections` | `ProtectionStatus` | Hardware protection flags |
 | `battery_a` | `BatteryPackStatus` *(property)* | Shortcut for `batteries[BatterySlot.A]` |
 | `battery_b` | `BatteryPackStatus` *(property)* | Shortcut for `batteries[BatterySlot.B]` |
+| `has_alert` | `bool` *(property)* | `True` if any alarm or protection flag is active |
 
 ### BatteryPackStatus
 
@@ -163,7 +164,7 @@ BMS data for one battery pack.
 
 Groups three alarm sources.
 
-```
+```text
 AlarmStatus
 ├── ic4015: Ic4015AlarmStatus
 ├── battery: BatteryAlarmStatus
@@ -222,7 +223,7 @@ class BatterySlot(Enum):
 
 All exceptions inherit from `BatteryBoxError`.
 
-```
+```text
 BatteryBoxError
 ├── TransportError          — serial port / I/O failure
 ├── TimeoutError            — device did not respond within timeout_s

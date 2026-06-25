@@ -96,3 +96,25 @@ class BatteryBoxStatus:
     @property
     def battery_b(self) -> BatteryPackStatus:
         return self.batteries[BatterySlot.B]
+
+    @property
+    def has_alert(self) -> bool:
+        """True if any alarm or protection flag is active."""
+        return (
+            self.alarms.ic4015.temp_over_95c
+            or self.alarms.ic4015.temp_over_105c
+            or self.alarms.ic4015.error
+            or self.alarms.battery.a_temp_over_65c
+            or self.alarms.battery.a_temp_over_75c
+            or self.alarms.battery.b_temp_over_65c
+            or self.alarms.battery.b_temp_over_75c
+            or self.alarms.system.reboot_by_ic4015_error
+            or self.alarms.system.reboot_by_uart_error
+            or self.alarms.system.stop_by_ic4015_temp
+            or self.alarms.system.stop_by_battery_a_temp
+            or self.alarms.system.stop_by_battery_b_temp
+            or self.alarms.system.output_12v_disabled_by_uart
+            or self.alarms.system.output_12v_disabled_by_battery
+            or self.protections.pack_over_voltage
+            or self.protections.pack_under_voltage
+        )
